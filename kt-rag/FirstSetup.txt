@@ -53,7 +53,7 @@
 
   ---
   Step 7 — Run Document Ingestion
-
+rmdir /s /q vectorstore
   python scripts\ingest.py
 
   Expected output:
