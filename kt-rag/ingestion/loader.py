@@ -1,0 +1,41 @@
+from pathlib import Path
+from ingestion.pdf_parser import parse_pdf
+from ingestion.docx_parser import parse_docx
+from ingestion.image_parser import parse_image
+from ingestion.xlsx_parser import parse_xlsx
+
+SUPPORTED_EXTENSIONS = {
+    ".pdf": parse_pdf,
+    ".docx": parse_docx,
+    ".doc": parse_docx,
+    ".png": parse_image,
+    ".jpg": parse_image,
+    ".jpeg": parse_image,
+    ".tiff": parse_image,
+    ".bmp": parse_image,
+    ".xlsx": parse_xlsx,
+    ".xls": parse_xlsx,
+}
+
+
+def load_documents(docs_dir: str) -> list[dict]:
+    """
+    Walk docs_dir, parse all supported files.
+    Returns flat list of {text, metadata} dicts.
+    """
+    docs_path = Path(docs_dir)
+    all_docs = []
+
+    for file_path in docs_path.rglob("*"):
+        ext = file_path.suffix.lower()
+        if ext in SUPPORTED_EXTENSIONS:
+            print(f"  Loading: {file_path.name}")
+            try:
+                parser = SUPPORTED_EXTENSIONS[ext]
+                docs = parser(str(file_path))
+                all_docs.extend(docs)
+            except Exception as e:
+                print(f"  ⚠️  Failed to parse {file_path.name}: {e}")
+
+    print(f"\n✅ Loaded {len(all_docs)} document sections from {docs_dir}")
+    return all_docs
