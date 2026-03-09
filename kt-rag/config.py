@@ -14,14 +14,15 @@ class Config:
     EMBED_MODEL = os.getenv("EMBED_MODEL", "nomic-embed-text")
 
     # Chunking
-    CHUNK_SIZE = int(os.getenv("CHUNK_SIZE", "800"))
-    CHUNK_OVERLAP = int(os.getenv("CHUNK_OVERLAP", "150"))
+    CHUNK_SIZE = int(os.getenv("CHUNK_SIZE", "1200"))
+    CHUNK_OVERLAP = int(os.getenv("CHUNK_OVERLAP", "200"))
 
     # Retrieval
-    TOP_K = int(os.getenv("TOP_K", "5"))
+    TOP_K = int(os.getenv("TOP_K", "8"))
+    SCORE_THRESHOLD = float(os.getenv("SCORE_THRESHOLD", "1.5"))
 
     # UI
-    UI_HOST = os.getenv("UI_HOST", "0.0.0.0")   # 0.0.0.0 = accessible on LAN
+    UI_HOST = os.getenv("UI_HOST", "0.0.0.0")
     UI_PORT = int(os.getenv("UI_PORT", "8000"))
 
 config = Config()
