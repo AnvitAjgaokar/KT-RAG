@@ -10,7 +10,7 @@ Open your browser: **http://&lt;server-ip&gt;:8000**
 - "How do we deploy to staging?"
 
 ## Adding New Documents
-1. Copy your PDF/DOCX/XLSX/image into the `docs/` folder on the server
+1. Copy your PDF/DOCX/XLSX/XLS/TXT into the `docs/` folder on the server
 2. SSH into the server and run: `python scripts/ingest.py`
 3. The new docs are immediately queryable
 
@@ -19,7 +19,6 @@ Open your browser: **http://&lt;server-ip&gt;:8000**
 ### Prerequisites
 - Python 3.11+
 - [Ollama](https://ollama.com) installed and running
-- Tesseract OCR (for image/scanned docs)
 
 ### Install
 ```bash
@@ -59,7 +58,7 @@ chainlit run ui/app.py --host 0.0.0.0 --port 8000
 ## Project Structure
 ```
 kt-rag/
-├── docs/           ← PUT ALL KT DOCUMENTS HERE (pdf/, docx/, images/, xlsx/)
+├── docs/           ← PUT ALL KT DOCUMENTS HERE (pdf/, docx/, xlsx/, txt/)
 ├── vectorstore/    ← Auto-created ChromaDB data
 ├── ingestion/      ← Document parsers + chunker
 ├── embeddings/     ← Ollama embedding wrapper

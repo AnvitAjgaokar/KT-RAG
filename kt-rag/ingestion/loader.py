@@ -1,20 +1,16 @@
 from pathlib import Path
 from ingestion.pdf_parser import parse_pdf
 from ingestion.docx_parser import parse_docx
-from ingestion.image_parser import parse_image
 from ingestion.xlsx_parser import parse_xlsx
+from ingestion.txt_parser import parse_txt
 
 SUPPORTED_EXTENSIONS = {
     ".pdf": parse_pdf,
     ".docx": parse_docx,
     ".doc": parse_docx,
-    ".png": parse_image,
-    ".jpg": parse_image,
-    ".jpeg": parse_image,
-    ".tiff": parse_image,
-    ".bmp": parse_image,
     ".xlsx": parse_xlsx,
     ".xls": parse_xlsx,
+    ".txt": parse_txt,
 }
 
 

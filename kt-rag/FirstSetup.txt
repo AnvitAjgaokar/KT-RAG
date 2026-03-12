@@ -7,17 +7,7 @@
   python --version
 
   ---
-  Step 2 — Install Tesseract OCR (for your PNG images)
-
-  1. Download the installer from: https://github.com/UB-Mannheim/tesseract/wiki
-  → get tesseract-ocr-w64-setup-5.x.x.exe
-  2. Install it — default path is C:\Program Files\Tesseract-OCR\
-  (the code already has this path hardcoded in ingestion/image_parser.py)
-  3. Verify:
-  & "C:\Program Files\Tesseract-OCR\tesseract.exe" --version
-
-  ---
-  Step 3 — Install Ollama
+  Step 2 — Install Ollama
 
   1. Download from https://ollama.com/download/windows and install
   2. It runs as a background service automatically after install
@@ -25,7 +15,7 @@
   ollama --version
 
   ---
-  Step 4 — Pull the Required Models
+  Step 3 — Pull the Required Models
 
   Run these in PowerShell (downloads ~1.5GB + ~300MB — one-time only):
   ollama pull llama3.2
@@ -35,7 +25,7 @@
   ollama list
 
   ---
-  Step 5 — Set Up Python Virtual Environment
+  Step 4 — Set Up Python Virtual Environment
 
   Open PowerShell and navigate to the project:
   cd C:\UOTM\RAG\kt-rag
@@ -45,14 +35,14 @@
   Your prompt should now show (venv).
 
   ---
-  Step 6 — Install Python Dependencies
+  Step 5 — Install Python Dependencies
 
   pip install -r requirements.txt
 
-  This installs LangChain, ChromaDB, Chainlit, PyMuPDF, openpyxl, pytesseract, etc.
+  This installs LangChain, ChromaDB, Chainlit, PyMuPDF, openpyxl, etc.
 
   ---
-  Step 7 — Run Document Ingestion
+  Step 6 — Run Document Ingestion
 rmdir /s /q vectorstore
   python scripts\ingest.py
 
@@ -62,7 +52,6 @@ rmdir /s /q vectorstore
     Loading: MFA_Application_Server_APP.pdf
     ...
     Loading: Anvit's KTSheet (1).xlsx
-    Loading: UOTM_PRODUCTION_SERVER_SETUP.png
     ...
   ✅ Loaded X document sections
 
@@ -72,17 +61,17 @@ rmdir /s /q vectorstore
   Step 3/3: Embedding & storing...
   ✅ Stored X chunks in vectorstore
 
-  The first run embeds everything — may take a few minutes. A vectorstore/ folder will be created.        
+  The first run embeds everything — may take a few minutes. A vectorstore/ folder will be created.
 
   ---
-  Step 8 — Test with a CLI Query
+  Step 7 — Test with a CLI Query
 
   python scripts\query.py "What is the MFA application server setup?"
 
   If you get an answer with source citations, the pipeline is working.
 
   ---
-  Step 9 — Launch the Chat UI
+  Step 8 — Launch the Chat UI
 
   chainlit run ui\app.py --host 0.0.0.0 --port 8000
 
@@ -91,16 +80,14 @@ rmdir /s /q vectorstore
   ---
   If Something Goes Wrong
 
-  ┌──────────────────────────────┬────────────────────────────────────────────────────────────────────┐   
-  │           Problem            │                                Fix                                 │   
-  ├──────────────────────────────┼────────────────────────────────────────────────────────────────────┤   
-  │ ollama: command not found    │ Restart PowerShell after Ollama install                            │   
-  ├──────────────────────────────┼────────────────────────────────────────────────────────────────────┤   
-  │ tesseract is not installed   │ Check path in ingestion/image_parser.py:8 matches your install     │   
-  ├──────────────────────────────┼────────────────────────────────────────────────────────────────────┤   
-  │ ModuleNotFoundError          │ Make sure (venv) is active, re-run pip install -r requirements.txt │   
-  ├──────────────────────────────┼────────────────────────────────────────────────────────────────────┤   
-  │ Connection refused on Ollama │ Open Ollama app from Start Menu to start the service               │   
-  ├──────────────────────────────┼────────────────────────────────────────────────────────────────────┤   
-  │ Slow ingestion               │ Normal — first run embeds all docs. Re-runs skip existing chunks.  │   
-  └──────────────────────────────┴────────────────────────────────────────────────────────────────────┘ 
+  ┌──────────────────────────────┬────────────────────────────────────────────────────────────────────┐
+  │           Problem            │                                Fix                                 │
+  ├──────────────────────────────┼────────────────────────────────────────────────────────────────────┤
+  │ ollama: command not found    │ Restart PowerShell after Ollama install                            │
+  ├──────────────────────────────┼────────────────────────────────────────────────────────────────────┤
+  │ ModuleNotFoundError          │ Make sure (venv) is active, re-run pip install -r requirements.txt │
+  ├──────────────────────────────┼────────────────────────────────────────────────────────────────────┤
+  │ Connection refused on Ollama │ Open Ollama app from Start Menu to start the service               │
+  ├──────────────────────────────┼────────────────────────────────────────────────────────────────────┤
+  │ Slow ingestion               │ Normal — first run embeds all docs. Re-runs skip existing chunks.  │
+  └──────────────────────────────┴────────────────────────────────────────────────────────────────────┘
