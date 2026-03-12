@@ -1,18 +1,25 @@
-FROM python:3.11-slim
+FROM python:3.12-slim
 
-# Install system deps
+# libgl1 is required by PyMuPDF (PDF parsing)
 RUN apt-get update && apt-get install -y \
-    tesseract-ocr \
-    tesseract-ocr-eng \
     libgl1 \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
+# Install Python dependencies first (layer cached unless requirements.txt changes)
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY . .
+# Copy application code (docs/ and vectorstore/ are mounted as volumes — not copied)
+COPY config.py .
+COPY .env .
+COPY ingestion/ ingestion/
+COPY embeddings/ embeddings/
+COPY vectordb/ vectordb/
+COPY rag/ rag/
+COPY ui/ ui/
+COPY scripts/ scripts/
 
 EXPOSE 8000
 
