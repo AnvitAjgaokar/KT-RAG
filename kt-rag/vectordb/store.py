@@ -32,8 +32,11 @@ def ingest_chunks(chunks: list[dict]):
     vectorstore = get_vectorstore()
     embedder = get_embedder()
 
+    from datetime import datetime
+    ingested_at = datetime.utcnow().isoformat()
+
     texts = [c["text"] for c in chunks]
-    metadatas = [c["metadata"] for c in chunks]
+    metadatas = [{**c["metadata"], "ingested_at": ingested_at} for c in chunks]
     ids = []
     for m in metadatas:
         # Build a unique key using source, sheet (if xlsx), page, and chunk index

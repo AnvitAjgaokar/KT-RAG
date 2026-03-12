@@ -6,6 +6,7 @@ Re-running is safe — existing chunks are upserted (updated), not duplicated.
 """
 import sys
 import os
+import urllib.request
 from collections import defaultdict
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
@@ -19,12 +20,29 @@ from rich.table import Table
 console = Console()
 
 
+def _check_ollama() -> bool:
+    """Return True if the Ollama API is reachable."""
+    try:
+        urllib.request.urlopen(f"{config.OLLAMA_BASE_URL}/api/tags", timeout=5)
+        return True
+    except Exception:
+        return False
+
+
 def main():
     console.print("\n[bold green]KT RAG — Document Ingestion Pipeline[/bold green]\n")
     console.print(f"Docs directory : {config.DOCS_DIR}")
     console.print(f"Vector store   : {config.VECTORSTORE_DIR}")
     console.print(f"Embed model    : {config.EMBED_MODEL}")
     console.print(f"Chunk size     : {config.CHUNK_SIZE} chars / overlap {config.CHUNK_OVERLAP}\n")
+
+    # Pre-flight: verify Ollama is running before doing any work
+    console.print("Checking Ollama connectivity...")
+    if not _check_ollama():
+        console.print(f"[bold red]Cannot reach Ollama at {config.OLLAMA_BASE_URL}[/bold red]")
+        console.print("Please open the Ollama app from the Start Menu and try again.")
+        sys.exit(1)
+    console.print("[green]Ollama is running.[/green]\n")
 
     console.print("[bold]Step 1/3:[/bold] Loading documents...")
     docs = load_documents(config.DOCS_DIR)

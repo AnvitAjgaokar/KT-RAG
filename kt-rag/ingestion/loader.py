@@ -2,6 +2,7 @@ from pathlib import Path
 from ingestion.pdf_parser import parse_pdf
 from ingestion.docx_parser import parse_docx
 from ingestion.xlsx_parser import parse_xlsx
+from ingestion.xls_parser import parse_xls
 from ingestion.txt_parser import parse_txt
 
 SUPPORTED_EXTENSIONS = {
@@ -9,7 +10,7 @@ SUPPORTED_EXTENSIONS = {
     ".docx": parse_docx,
     ".doc": parse_docx,
     ".xlsx": parse_xlsx,
-    ".xls": parse_xlsx,
+    ".xls": parse_xls,
     ".txt": parse_txt,
 }
 

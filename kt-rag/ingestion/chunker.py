@@ -10,10 +10,37 @@ def _normalize(text: str) -> str:
     return text.strip()
 
 
+def _build_prefix(metadata: dict) -> str:
+    """
+    Build a context prefix tailored to the file type.
+    XLSX/XLS: sheet name + row range. DOCX: section heading. Others: filename + page.
+    """
+    source = metadata.get("source", "")
+    if not source:
+        return ""
+
+    file_type = metadata.get("file_type", "")
+    sheet = metadata.get("sheet", "")
+    rows_start = metadata.get("rows_start", "")
+    rows_end = metadata.get("rows_end", "")
+    section = metadata.get("section", "")
+    page = metadata.get("page", "")
+
+    if file_type in ("xlsx", "xls") and sheet:
+        if rows_start and rows_end:
+            return f"[From: {source}, Sheet: {sheet}, Rows {rows_start}-{rows_end}]\n"
+        return f"[From: {source}, Sheet: {sheet}]\n"
+
+    if file_type in ("docx", "doc") and section and section != "Document Start":
+        return f"[From: {source}, Section: {section}]\n"
+
+    return f"[From: {source}, p.{page}]\n"
+
+
 def chunk_documents(docs: list[dict]) -> list[dict]:
     """
     Normalize, then split document sections into overlapping chunks.
-    Prepends source name to each chunk for grounding context.
+    Prepends a context-aware prefix to every chunk for grounding.
     """
     splitter = RecursiveCharacterTextSplitter(
         chunk_size=config.CHUNK_SIZE,
@@ -27,10 +54,7 @@ def chunk_documents(docs: list[dict]) -> list[dict]:
         if not clean_text:
             continue
 
-        # Prepend source so every chunk is self-contained
-        source_label = doc["metadata"].get("source", "")
-        page = doc["metadata"].get("page", "")
-        prefix = f"[From: {source_label}, p.{page}]\n" if source_label else ""
+        prefix = _build_prefix(doc["metadata"])
         labeled_text = prefix + clean_text
 
         text_chunks = splitter.split_text(labeled_text)
